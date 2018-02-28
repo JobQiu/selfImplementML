@@ -6,21 +6,6 @@
 
 import random
 import numpy as np
-import matplotlib.pyplot as plt
-
-# This is a bit of magic to make matplotlib figures appear inline in the notebook
-# rather than in a new window.
-
-get_ipython().magic('matplotlib inline')
-plt.rcParams['figure.figsize'] = (10.0, 8.0) # set default size of plots
-plt.rcParams['image.interpolation'] = 'nearest'
-plt.rcParams['image.cmap'] = 'gray'
-
-# Some more magic so that the notebook will reload external python modules;
-# see http://stackoverflow.com/questions/1907993/autoreload-of-modules-in-ipython
-
-get_ipython().magic('load_ext autoreload')
-get_ipython().magic('autoreload 2')
 
 
 # In[ ]:
@@ -47,7 +32,8 @@ import utils
 import scipy.io
 import numpy as np
 from linear_classifier import LinearSVM_twoclass
-
+from sklearn.metrics import accuracy_score
+        
 # load the SPAM email training dataset
 
 X,y = utils.load_mat('data/spamTrain.mat')
@@ -105,13 +91,14 @@ for sigma_ in sigma_vals:
         
         svm.theta = np.zeros((KK.shape[1],))
         
-        learning_rates = [1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1]
+        learning_rates = [1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.5]
+        
         best_learning_rate = 0
         best_decrease_ratio = 0
         best_svm_theta = None
         for learning_rate in learning_rates:
             svm.theta = np.zeros((KK.shape[1],))
-            loss_history = svm.train(KK,y_train,learning_rate=learning_rate,reg=C_,num_iters=2000,verbose=True,batch_size=KK.shape[0])
+            loss_history = svm.train(KK,y_train,learning_rate=learning_rate,reg=C_,num_iters=100,verbose=True,batch_size=KK.shape[0])
             temp_LR = linear_model.LinearRegression()
             XXX = np.array(range(1900)).reshape(1900,1)
             yyy = np.array(loss_history)[100:]
@@ -126,13 +113,14 @@ for sigma_ in sigma_vals:
                 
             send_msg("for sigma_ = "+(str)(sigma_) + " c_ = "+(str)(C_)+
                      ",  when learning rate is "+(str)(learning_rate)+
-                     " decrease_ratio is "+(str)(temp_LR.coef_[0]))
+                     " decrease_ratio is "+(str)(temp_LR.coef_[0])+" final loss is" + (str)(loss_history[-1]))))
+            np.save("simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)(learning_rate*10000000),np.array(loss_history))
+            
         svm.theta = best_svm_theta
-        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate,reg=C_,num_iters=100,verbose=True,batch_size=KK.shape[0])
-        from sklearn.metrics import accuracy_score
+        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate,reg=C_,num_iters=20000,verbose=True,batch_size=KK.shape[0])
         score_ = (accuracy_score(svm.predict(KK),y_train))
+        np.save("bestsimga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)(learning_rate*10000000),np.array(loss_history))
         print score_
-        plt.plot(loss_history)
 
 
 loss_history = svm.train(KK,y_train,learning_rate=1e-4,reg=C_,num_iters=2000,verbose=True,batch_size=KK.shape[0])
