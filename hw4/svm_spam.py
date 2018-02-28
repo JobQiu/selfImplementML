@@ -68,7 +68,7 @@ sigma_ = 0.1
 C_ = 0.3
 
 Cvals = [0.01,0.03,0.1,0.3,1,3,10,30]
-sigma_vals = [0.01,0.03,0.1,0.3,1,3,10,30]
+sigma_vals = [0.01,0.03,0.1,0.3,0.5,1,3,10,30]
 best_C = None
 best_sigma = None
 bese_score = 0
@@ -107,7 +107,7 @@ for sigma_ in sigma_vals:
             yyy = np.array(loss_history)[100:]
             temp_LR.fit(X=XXX,y=yyy)
             print temp_LR.coef_
-            if temp_LR.coef_[0] < best_decrease_ratio:
+            if temp_LR.coef_[0] < best_decrease_ratio and loss_history[-1] < 10:
                 best_learning_rate = learning_rate
                 best_svm_theta = svm.theta
                 best_decrease_ratio = temp_LR.coef_[0]
@@ -122,8 +122,8 @@ for sigma_ in sigma_vals:
             
         svm.theta = best_svm_theta
         loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate,reg=C_,num_iters=12000,verbose=True,batch_size=KK.shape[0])
-        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate/5.0,reg=C_,num_iters=6000,verbose=True,batch_size=KK.shape[0])
-        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate/50.0,reg=C_,num_iters=6000,verbose=True,batch_size=KK.shape[0])
+        loss_history.append(svm.train(KK,y_train,learning_rate=best_learning_rate/5.0,reg=C_,num_iters=6000,verbose=True,batch_size=KK.shape[0]))
+        loss_history.append(svm.train(KK,y_train,learning_rate=best_learning_rate/50.0,reg=C_,num_iters=6000,verbose=True,batch_size=KK.shape[0]))
         
         score_ = (accuracy_score(svm.predict(KK),y_train))
         score_val = (accuracy_score(svm.predict(KK_val),y_val))
