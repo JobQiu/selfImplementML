@@ -72,10 +72,11 @@ sigma_vals = [0.01,0.03,0.1,0.3,1,3,10,30]
 best_C = None
 best_sigma = None
 bese_score = 0
+
+K = np.load("E_distance.npy")
+K_val = np.load('E_distance_val.npy')
 for sigma_ in sigma_vals:
     
-    K = np.load("E_distance.npy")
-    K_val = np.load('E_distance_val.npy')
     K_gaussian_k = np.exp(-K/(2*(sigma_**2)))
     # add the intercept term
     # what I want here is to iterate all the combination and get the best result for val data set.
@@ -98,9 +99,10 @@ for sigma_ in sigma_vals:
         best_svm_theta = None
         for learning_rate in learning_rates:
             svm.theta = np.zeros((KK.shape[1],))
-            loss_history = svm.train(KK,y_train,learning_rate=learning_rate,reg=C_,num_iters=2000,verbose=True,batch_size=KK.shape[0])
+            num_iters = 20000
+            loss_history = svm.train(KK,y_train,learning_rate=learning_rate,reg=C_,num_iters=num_iters,verbose=True,batch_size=KK.shape[0])
             temp_LR = linear_model.LinearRegression()
-            XXX = np.array(range(1900)).reshape(1900,1)
+            XXX = np.array(range(num_iters-100)).reshape(num_iters-100,1)
             yyy = np.array(loss_history)[100:]
             temp_LR.fit(X=XXX,y=yyy)
             print temp_LR.coef_
@@ -114,12 +116,12 @@ for sigma_ in sigma_vals:
             send_msg("for sigma_ = "+(str)(sigma_) + " c_ = "+(str)(C_)+
                      ",  when learning rate is "+(str)(learning_rate)+
                      " decrease_ratio is "+(str)(temp_LR.coef_[0])+" final loss is" + (str)(loss_history[-1]))
-            np.save("simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)(learning_rate*10000000),np.array(loss_history))
+            np.save("simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(learning_rate*10000000)),np.array(loss_history))
             
         svm.theta = best_svm_theta
-        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate,reg=C_,num_iters=20000,verbose=True,batch_size=KK.shape[0])
+        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate,reg=C_,num_iters=40000,verbose=True,batch_size=KK.shape[0])
         score_ = (accuracy_score(svm.predict(KK),y_train))
-        np.save("bestsimga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)(learning_rate*10000000),np.array(loss_history))
+        np.save("bestsimga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(learning_rate*10000000)),np.array(loss_history))
         print score_
 
 
