@@ -98,7 +98,7 @@ for sigma_ in sigma_vals:
         best_svm_theta = None
         for learning_rate in learning_rates:
             svm.theta = np.zeros((KK.shape[1],))
-            loss_history = svm.train(KK,y_train,learning_rate=learning_rate,reg=C_,num_iters=100,verbose=True,batch_size=KK.shape[0])
+            loss_history = svm.train(KK,y_train,learning_rate=learning_rate,reg=C_,num_iters=2000,verbose=True,batch_size=KK.shape[0])
             temp_LR = linear_model.LinearRegression()
             XXX = np.array(range(1900)).reshape(1900,1)
             yyy = np.array(loss_history)[100:]
