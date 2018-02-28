@@ -113,7 +113,7 @@ for sigma_ in sigma_vals:
                 
             send_msg("for sigma_ = "+(str)(sigma_) + " c_ = "+(str)(C_)+
                      ",  when learning rate is "+(str)(learning_rate)+
-                     " decrease_ratio is "+(str)(temp_LR.coef_[0])+" final loss is" + (str)(loss_history[-1]))))
+                     " decrease_ratio is "+(str)(temp_LR.coef_[0])+" final loss is" + (str)(loss_history[-1]))
             np.save("simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)(learning_rate*10000000),np.array(loss_history))
             
         svm.theta = best_svm_theta
