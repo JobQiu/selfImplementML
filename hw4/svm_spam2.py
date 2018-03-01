@@ -67,7 +67,7 @@ y_train,y_val = yy[:3200],yy[3200:]
 sigma_ = 0.1
 C_ = 0.3
 
-Cvals = [50,70]
+Cvals = [30]
 sigma_vals = [2.1]
 best_C = None
 best_sigma = None
@@ -91,49 +91,29 @@ for sigma_ in sigma_vals:
         
     for C_ in Cvals:
         
-        svm.theta = np.zeros((KK.shape[1],))
+        svm.theta = np.load('besttheta_of_simga_210.0C_30learn10000.npy')
         
-        learning_rates = [1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.5]
+        learning_rates = [1e-7,1e-6,1e-5,1e-4,1e-3,1e-2]
         
-        best_learning_rate =1e-7
+        best_learning_rate =1e-3
         best_decrease_ratio = 0
         best_svm_theta = None
-        for learning_rate in learning_rates:
-            svm.theta = np.zeros((KK.shape[1],))
-            num_iters = 1000
-            loss_history = svm.train(KK,y_train,learning_rate=learning_rate,reg=C_,num_iters=num_iters,verbose=True,batch_size=KK.shape[0])
-            temp_LR = linear_model.LinearRegression()
-            XXX = np.array(range(num_iters-100)).reshape(num_iters-100,1)
-            yyy = np.array(loss_history)[100:]
-            temp_LR.fit(X=XXX,y=yyy)
-            print temp_LR.coef_
-            if temp_LR.coef_[0] < best_decrease_ratio and loss_history[-1] < 10:
-                best_learning_rate = learning_rate
-                best_svm_theta = svm.theta
-                best_decrease_ratio = temp_LR.coef_[0]
-                print best_learning_rate
-                print best_decrease_ratio
-                
-            send_msg("for sigma_ = "+(str)(sigma_) + " c_ = "+(str)(C_)+
-                     ",  when learning rate is "+(str)(learning_rate)+
-                     " decrease_ratio is "+(str)(temp_LR.coef_[0])+" final loss is" + (str)(loss_history[-1]))
-            np.save("simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(learning_rate*10000000)),np.array(loss_history))
-            np.save("theta_of_simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(learning_rate*10000000)),svm.theta)
-            
-        svm.theta = best_svm_theta
-        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate/3.0,reg=C_,num_iters=16000,verbose=True,batch_size=KK.shape[0])
+           
+        svm.theta = np.load('besttheta_of_simga_210.0C_30learn10000.npy')
+        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate/1.0,reg=C_,num_iters=26000,verbose=True,batch_size=KK.shape[0])
+        loss_history.extend(svm.train(KK,y_train,learning_rate=best_learning_rate/2.0,reg=C_,num_iters=19000,verbose=True,batch_size=KK.shape[0]))
         loss_history.extend(svm.train(KK,y_train,learning_rate=best_learning_rate/5.0,reg=C_,num_iters=9000,verbose=True,batch_size=KK.shape[0]))
-        loss_history.extend(svm.train(KK,y_train,learning_rate=best_learning_rate/50.0,reg=C_,num_iters=9000,verbose=True,batch_size=KK.shape[0]))
         
         score_ = (accuracy_score(svm.predict(KK),y_train))
         score_val = (accuracy_score(svm.predict(KK_val),y_val))
         
-        np.save("bestsimga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(best_learning_rate*10000000)),np.array(loss_history))
-        np.save("besttheta_of_simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(best_learning_rate*10000000)),svm.theta)
+        np.save("bestsimga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(10000)),np.array(loss_history))
+
+        np.save("besttheta_of_simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(10000)),svm.theta)
             
         send_msg("for sigma_ = "+(str)(sigma_) + " c_ = "+(str)(C_)+
                      ",  when learning rate is "+(str)(best_learning_rate)+
-                     " decrease_ratio is "+(str)(temp_LR.coef_[0])+
+                     " decrease_ratio is "+(str)()+
                      " final loss is " + (str)(loss_history[-1])+
                      " score of train is "+(str)(score_)+
                      " score of val is "+(str)(score_val)
