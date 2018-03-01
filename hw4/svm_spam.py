@@ -82,7 +82,7 @@ for sigma_ in sigma_vals:
 #    K_gaussian_val = np.exp(-K_val/(2*(sigma_**2)))
     K_gaussian_k = K
     K_gaussian_val = K_val
-    sigma_ = 
+    
     # add the intercept term
     # what I want here is to iterate all the combination and get the best result for val data set.
     # 1. how to determine the best learn rate, for them to converge?
