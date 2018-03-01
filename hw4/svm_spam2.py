@@ -73,12 +73,19 @@ best_C = None
 best_sigma = None
 bese_score = 0
 
+def E_distance(x1,x2):
+    return np.sum((x1-x2)**2)
+
+
+#K_test = np.array([E_distance(x1,x2) for x1 in X_test for x2 in X_train]).reshape(X_test.shape[0],X_train.shape[0])
+K_test = np.load("E_distance_test.npy")
 K = np.load("E_distance.npy")
 K_val = np.load('E_distance_val.npy')
 for sigma_ in sigma_vals:
     
     K_gaussian_k = np.exp(-K/(2*(sigma_**2)))
     K_gaussian_val = np.exp(-K_val/(2*(sigma_**2)))
+    K_gaussian_test = np.exp(-K_test/(2*(sigma_**2)))
     # add the intercept term
     # what I want here is to iterate all the combination and get the best result for val data set.
     # 1. how to determine the best learn rate, for them to converge?
@@ -88,6 +95,8 @@ for sigma_ in sigma_vals:
     
     KK = np.vstack([np.ones((K_gaussian_k.shape[0],)),K_gaussian_k.T]).T
     KK_val = np.vstack([np.ones((K_gaussian_val.shape[0],)),K_gaussian_val.T]).T
+    KK = np.hstack([KK,KK_val])
+    KK_val =  np.vstack([np.ones((K_gaussian_test.shape[0],)),K_gaussian_test.T]).T
         
     for C_ in Cvals:
         
