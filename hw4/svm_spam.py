@@ -68,7 +68,7 @@ sigma_ = 0.1
 C_ = 0.3
 
 Cvals = [0.01,0.03,0.1,0.3,1,3,10,30]
-sigma_vals = [0.01,0.03,0.1,0.3,0.5,1,3,10,30]
+sigma_vals = [0.01,0.03,0.1]
 best_C = None
 best_sigma = None
 bese_score = 0
