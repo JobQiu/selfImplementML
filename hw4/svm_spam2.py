@@ -95,7 +95,7 @@ for sigma_ in sigma_vals:
     
     KK = np.vstack([np.ones((K_gaussian_k.shape[0],)),K_gaussian_k.T]).T
     KK_val = np.vstack([np.ones((K_gaussian_val.shape[0],)),K_gaussian_val.T]).T
-    KK = np.hstack([KK,KK_val])
+    KK = np.vstack([KK,KK_val])
     KK_val =  np.vstack([np.ones((K_gaussian_test.shape[0],)),K_gaussian_test.T]).T
         
     for C_ in Cvals:

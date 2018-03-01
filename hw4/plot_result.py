@@ -23,16 +23,38 @@ loss_ = np.load("simga_210.0C_0.3learn100000.npy")
 temp_LR = linear_model.LinearRegression()
 XXX = np.array(range(num_iters-100)).reshape(num_iters-100,1)
 yyy = np.array(loss_)[100:]
-plt.plot(loss_)
+temp_LR.fit(XXX,yyy)
+print(temp_LR.coef_)
+plt.plot(loss_,)
 loss_ = np.load("simga_210.0C_0.3learn10000.npy")
+
+yyy = np.array(loss_)[100:]
+temp_LR.fit(XXX,yyy)
+print(temp_LR.coef_)
 plt.plot(loss_)
 loss_ = np.load("simga_210.0C_0.3learn1000.npy")
+
+yyy = np.array(loss_)[100:]
+temp_LR.fit(XXX,yyy)
+print(temp_LR.coef_)
 plt.plot(loss_)
 loss_ = np.load("simga_210.0C_0.3learn100.npy")
+
+yyy = np.array(loss_)[100:]
+temp_LR.fit(XXX,yyy)
+print(temp_LR.coef_)
 plt.plot(loss_)
 loss_ = np.load("simga_210.0C_0.3learn10.npy")
+
+yyy = np.array(loss_)[100:]
+temp_LR.fit(XXX,yyy)
+print(temp_LR.coef_)
 plt.plot(loss_)
 loss_ = np.load("simga_210.0C_0.3learn1.npy")
+
+yyy = np.array(loss_)[100:]
+temp_LR.fit(XXX,yyy)
+print(temp_LR.coef_)
 plt.plot(loss_)
 #plt.ylim(0.15,0.35)
 #%%
