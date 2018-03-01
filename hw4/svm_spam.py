@@ -68,7 +68,8 @@ sigma_ = 0.1
 C_ = 0.3
 
 Cvals = [0.01,0.03,0.1,0.3,1,3,10,30]
-sigma_vals = [0.01,0.03,0.1]
+sigma_vals = [0.01,0.03,0.1,0.3,0.5,1,3,10,30]
+sigma_vals = [22222222]
 best_C = None
 best_sigma = None
 bese_score = 0
@@ -77,8 +78,11 @@ K = np.load("E_distance.npy")
 K_val = np.load('E_distance_val.npy')
 for sigma_ in sigma_vals:
     
-    K_gaussian_k = np.exp(-K/(2*(sigma_**2)))
-    K_gaussian_val = np.exp(-K_val/(2*(sigma_**2)))
+#    K_gaussian_k = np.exp(-K/(2*(sigma_**2)))
+#    K_gaussian_val = np.exp(-K_val/(2*(sigma_**2)))
+    K_gaussian_k = K
+    K_gaussian_val = K_val
+    sigma_ = 
     # add the intercept term
     # what I want here is to iterate all the combination and get the best result for val data set.
     # 1. how to determine the best learn rate, for them to converge?
@@ -121,18 +125,18 @@ for sigma_ in sigma_vals:
             np.save("theta_of_simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(learning_rate*10000000)),svm.theta)
             
         svm.theta = best_svm_theta
-        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate,reg=C_,num_iters=12000,verbose=True,batch_size=KK.shape[0])
-        loss_history.append(svm.train(KK,y_train,learning_rate=best_learning_rate/5.0,reg=C_,num_iters=6000,verbose=True,batch_size=KK.shape[0]))
+        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate/3,reg=C_,num_iters=12000,verbose=True,batch_size=KK.shape[0])
+        loss_history.append(svm.train(KK,y_train,learning_rate=best_learning_rate/10.0,reg=C_,num_iters=6000,verbose=True,batch_size=KK.shape[0]))
         loss_history.append(svm.train(KK,y_train,learning_rate=best_learning_rate/50.0,reg=C_,num_iters=6000,verbose=True,batch_size=KK.shape[0]))
         
         score_ = (accuracy_score(svm.predict(KK),y_train))
         score_val = (accuracy_score(svm.predict(KK_val),y_val))
         
-        np.save("bestsimga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(learning_rate*10000000)),np.array(loss_history))
-        np.save("besttheta_of_simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(learning_rate*10000000)),svm.theta)
+        np.save("bestsimga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(best_learning_rate*10000000)),np.array(loss_history))
+        np.save("besttheta_of_simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(best_learning_rate*10000000)),svm.theta)
             
         send_msg("for sigma_ = "+(str)(sigma_) + " c_ = "+(str)(C_)+
-                     ",  when learning rate is "+(str)(learning_rate)+
+                     ",  when learning rate is "+(str)(best_learning_rate)+
                      " decrease_ratio is "+(str)(temp_LR.coef_[0])+
                      " final loss is " + (str)(loss_history[-1])+
                      " score of train is "+(str)(score_)+
