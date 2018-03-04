@@ -90,7 +90,7 @@ for sigma_ in sigma_vals:
         svm = LinearSVM_twoclass()
         svm.theta = np.zeros((KK.shape[1],))
 
-        best_learning_rate = 1e-4
+        best_learning_rate = 1e-3
         best_decrease_ratio = 0
         loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate,reg=C_,num_iters=12000,verbose=True,batch_size=KK.shape[0])
 
