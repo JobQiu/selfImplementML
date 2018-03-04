@@ -8,7 +8,7 @@ for filename in os.listdir("/Users/xavier.qiu/Documents/GitHub/selfImplementML/h
         print("1")
         loss_ = np.load(filename)
         plt.plot(loss_)
-plt.ylim(0,10)
+plt.ylim(0,0.2)
 plt.show()
 
 

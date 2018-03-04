@@ -111,7 +111,7 @@ for sigma_ in sigma_vals:
                      " when sigma = "+(str)(best_sigma) +
                      " and C = " + (str)(C_))
 
-
+send_msg("done")
 #loss_history = svm.train(KK,y_train,learning_rate=1e-4,reg=C_,num_iters=2000,verbose=True,batch_size=KK.shape[0])
 #temp_LR = linear_model.LinearRegression()
 #XXX = np.array(range(1900)).reshape(1900,1)
