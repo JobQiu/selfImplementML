@@ -32,6 +32,7 @@ def send_msg(msg="...",
             data=json.dumps(post_data))
 
 from sklearn import preprocessing, metrics, linear_model
+from sklearn.model_selection import train_test_split
 import utils
 import scipy.io
 import numpy as np
@@ -64,32 +65,20 @@ best_test_score  = 0
 svm = LinearSVM_twoclass()
 svm.theta = np.zeros((X.shape[1],))
 p = 0.8
-X_train,X_val = X [:3200],X [3200:]
-y_train,y_val = yy[:3200],yy[3200:]
+X_train, X_val, y_train, y_val = train_test_split(X,yy,test_size = 0.2)
 
 # try gaussian kernel
-sigma_ = 0.1
-C_ = 0.3
 
-Cvals = [0.01,0.03,0.1,0.3,1,3,10,30]
-sigma_vals = [333333]
+Cvals = [0.03,0.1,0.3,1,3,10,30,50,70]
+sigma_vals = [44444]
 best_C = None
 best_sigma = None
 bese_score = 0
 
 for sigma_ in sigma_vals:
 
-#    K_gaussian_k = np.exp(-K/(2*(sigma_**2)))
-#    K_gaussian_val = np.exp(-K_val/(2*(sigma_**2)))
     K_gaussian_k = X_train
     K_gaussian_val = X_val
-
-    # add the intercept term
-    # what I want here is to iterate all the combination and get the best result for val data set.
-    # 1. how to determine the best learn rate, for them to converge?
-    # 2. how to save the best coefficient, so that we can reuse them later
-    # 3. how to save the loss history, so that we can compate them?
-    # build a dictionary for them and save them as json.
 
     KK = np.vstack([np.ones((K_gaussian_k.shape[0],)),K_gaussian_k.T]).T
     KK_val = np.vstack([np.ones((K_gaussian_val.shape[0],)),K_gaussian_val.T]).T
@@ -98,37 +87,9 @@ for sigma_ in sigma_vals:
 
         svm.theta = np.zeros((KK.shape[1],))
 
-        learning_rates = [1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.5]
-
-        best_learning_rate = 0
+        best_learning_rate = 1e-6
         best_decrease_ratio = 0
-        best_svm_theta = None
-        for learning_rate in learning_rates:
-            svm.theta = np.zeros((KK.shape[1],))
-            num_iters = 2000
-            loss_history = svm.train(KK,y_train,learning_rate=learning_rate,reg=C_,num_iters=num_iters,verbose=True,batch_size=KK.shape[0])
-            temp_LR = linear_model.LinearRegression()
-            XXX = np.array(range(num_iters-300)).reshape(num_iters-300,1)
-            yyy = np.array(loss_history)[300:]
-            temp_LR.fit(X=XXX,y=yyy)
-            print temp_LR.coef_
-            if temp_LR.coef_[0] < best_decrease_ratio and loss_history[-1] < 10:
-                best_learning_rate = learning_rate
-                best_svm_theta = svm.theta
-                best_decrease_ratio = temp_LR.coef_[0]
-                print best_learning_rate
-                print best_decrease_ratio
-
-            send_msg("for sigma_ = "+(str)(sigma_) + " c_ = "+(str)(C_)+
-                     ",  when learning rate is "+(str)(learning_rate)+
-                     " decrease_ratio is "+(str)(temp_LR.coef_[0])+" final loss is" + (str)(loss_history[-1]))
-            np.save("simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(learning_rate*10000000)),np.array(loss_history))
-            np.save("theta_of_simga_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(learning_rate*10000000)),svm.theta)
-
-        svm.theta = best_svm_theta
-        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate/3,reg=C_,num_iters=12000,verbose=True,batch_size=KK.shape[0])
-        loss_history.append(svm.train(KK,y_train,learning_rate=best_learning_rate/10.0,reg=C_,num_iters=6000,verbose=True,batch_size=KK.shape[0]))
-        loss_history.append(svm.train(KK,y_train,learning_rate=best_learning_rate/50.0,reg=C_,num_iters=6000,verbose=True,batch_size=KK.shape[0]))
+        loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate,reg=C_,num_iters=12000,verbose=True,batch_size=KK.shape[0])
 
         score_ = (accuracy_score(svm.predict(KK),y_train))
         score_val = (accuracy_score(svm.predict(KK_val),y_val))
@@ -138,7 +99,6 @@ for sigma_ in sigma_vals:
 
         send_msg("for sigma_ = "+(str)(sigma_) + " c_ = "+(str)(C_)+
                      ",  when learning rate is "+(str)(best_learning_rate)+
-                     " decrease_ratio is "+(str)(temp_LR.coef_[0])+
                      " final loss is " + (str)(loss_history[-1])+
                      " score of train is "+(str)(score_)+
                      " score of val is "+(str)(score_val)
