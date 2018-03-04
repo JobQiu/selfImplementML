@@ -13,6 +13,10 @@ import numpy as np
 def send_msg(msg="...",
              dingding_url = "https://oapi.dingtalk.com/robot/send?access_token=67f442405a74c7f0115b5e9f63da890029c7a3a41c371f436e059f1f63497eef"
              ):
+    
+    """
+    this method is used to notify me about the results after the training
+    """
     import requests
     import json
     headers = {"Content-Type": "application/json; charset=utf-8"}
