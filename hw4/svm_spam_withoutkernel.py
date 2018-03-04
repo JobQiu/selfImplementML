@@ -72,7 +72,7 @@ X_train, X_val, y_train, y_val = train_test_split(X,yy,test_size = 0.2)
 
 # try gaussian kernel
 
-Cvals = [0.03,0.1,0.3,1,3,10,30,50,70]
+Cvals = [0.3,1,3,10,30,50,70,80,90]
 sigma_vals = [44444]
 best_C = None
 best_sigma = None
@@ -116,8 +116,12 @@ for sigma_ in sigma_vals:
                      " when sigma = "+(str)(best_sigma) +
                      " and C = " + (str)(C_))
             best_svm = svm
+            
+KK_ = np.vstack([np.ones((X.shape[0],)),X.T]).T
+loss_history = best_svm.train(KK_,yy,learning_rate=best_learning_rate,reg=best_C ,num_iters=12000,verbose=True,batch_size=KK.shape[0])
+np.save("bestsimga_Full_"+(str)(sigma_*100)+"C_"+(str)(C_)+"learn"+(str)((int)(best_learning_rate*10000000)),np.array(loss_history))
 score_test = (accuracy_score(svm.predict(KK_test),y_test))
-send_msg("done,test score = "+(str)(score_test))
+send_msg("done,test score = "+(str)(score_test)+" when c = "+(str)(best_C))
 
 ##################################################################################
 # YOUR CODE HERE for testing your best model's performance                       #
