@@ -50,7 +50,9 @@ yy[y==0] = -1
 test_data = scipy.io.loadmat('data/spamTest.mat')
 X_test = test_data['Xtest']
 y_test = test_data['ytest'].flatten()
-y_test[y_test == 0 ] = -1
+y_test_ = np.ones(y_test.shape)
+y_test_[y_test == 0] = -1
+y_test = y_test_
 
 ##################################################################################
 #  YOUR CODE HERE for training the best performing SVM for the data above.       #
