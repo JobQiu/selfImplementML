@@ -79,6 +79,7 @@ best_sigma = None
 bese_score = 0
 best_svm = None
 
+#%%
 for sigma_ in sigma_vals:
 
     K_gaussian_k = X_train
@@ -130,13 +131,21 @@ send_msg("done,test score = "+(str)(score_test)+" when c = "+(str)(best_C))
 
 # calculate the largest learning rate
 
-
+#%%
 ##################################################################################
 # ANALYSIS OF MODEL: Print the top 15 words that are predictive of spam and for  #
 # ham. Hint: use the coefficient values of the learned model                     #
 ##################################################################################
 words, inv_words = utils.get_vocab_dict()
+index = np.argsort(svm.theta)[-15:]
 
+print index
+
+print "Top 15 predictors of spam are: "
+
+for i in range(-1,-16,-1):
+
+    print words[index[i]+1]
 ##################################################################################
 #                    END OF YOUR CODE                                            #
 ##################################################################################
