@@ -90,7 +90,7 @@ for sigma_ in sigma_vals:
         svm = LinearSVM_twoclass()
         svm.theta = np.zeros((KK.shape[1],))
 
-        best_learning_rate = 1e-6
+        best_learning_rate = 1e-5
         best_decrease_ratio = 0
         loss_history = svm.train(KK,y_train,learning_rate=best_learning_rate,reg=C_,num_iters=12000,verbose=True,batch_size=KK.shape[0])
 
@@ -116,12 +116,7 @@ for sigma_ in sigma_vals:
             best_svm = svm
 score_test = (accuracy_score(svm.predict(KK_test),y_test))
 send_msg("done,test score = "+(str)(score_test))
-#loss_history = svm.train(KK,y_train,learning_rate=1e-4,reg=C_,num_iters=2000,verbose=True,batch_size=KK.shape[0])
-#temp_LR = linear_model.LinearRegression()
-#XXX = np.array(range(1900)).reshape(1900,1)
-#yyy = np.array(loss_history)[100:]
-#temp_LR.fit(X=XXX,y=yyy)
-#print(temp_LR.coef_)
+
 ##################################################################################
 # YOUR CODE HERE for testing your best model's performance                       #
 # what is the accuracy of your best model on the test set? On the training set?  #
