@@ -50,6 +50,7 @@ yy[y==0] = -1
 test_data = scipy.io.loadmat('data/spamTest.mat')
 X_test = test_data['Xtest']
 y_test = test_data['ytest'].flatten()
+y_test[y_test == 0 ] = -1
 
 ##################################################################################
 #  YOUR CODE HERE for training the best performing SVM for the data above.       #
@@ -74,6 +75,7 @@ sigma_vals = [44444]
 best_C = None
 best_sigma = None
 bese_score = 0
+best_svm = None
 
 for sigma_ in sigma_vals:
 
@@ -82,9 +84,10 @@ for sigma_ in sigma_vals:
 
     KK = np.vstack([np.ones((K_gaussian_k.shape[0],)),K_gaussian_k.T]).T
     KK_val = np.vstack([np.ones((K_gaussian_val.shape[0],)),K_gaussian_val.T]).T
-
+    KK_test = np.vstack([np.ones((X_test.shape[0],)),X_test.T]).T
     for C_ in Cvals:
 
+        svm = LinearSVM_twoclass()
         svm.theta = np.zeros((KK.shape[1],))
 
         best_learning_rate = 1e-6
@@ -110,8 +113,9 @@ for sigma_ in sigma_vals:
             send_msg("best score of val is "+(str)(score_val)+
                      " when sigma = "+(str)(best_sigma) +
                      " and C = " + (str)(C_))
-
-send_msg("done")
+            best_svm = svm
+score_test = (accuracy_score(svm.predict(KK_test),y_test))
+send_msg("done,test score = "+(str)(score_test))
 #loss_history = svm.train(KK,y_train,learning_rate=1e-4,reg=C_,num_iters=2000,verbose=True,batch_size=KK.shape[0])
 #temp_LR = linear_model.LinearRegression()
 #XXX = np.array(range(1900)).reshape(1900,1)
