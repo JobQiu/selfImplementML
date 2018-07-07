@@ -82,4 +82,5 @@ class User(Resource):
       
 api.add_resource(User, "/user/<string:name>")
 
-app.run(debug=True)
+app.run(debug=True, port = 8086, host='0.0.0.0')
+#%%
