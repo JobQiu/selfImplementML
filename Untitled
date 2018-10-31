@@ -1,0 +1,15 @@
+public void backtrack(List<String> list, String str, int open, int max){
+
+if(str.length() == max*2){
+list.add(str);
+return;
+}
+
+if(open < max){
+backtrack(list, str+"(",open+1,close,max);
+}
+if(close<open){
+backtrack(list,str+")",open,close+1,max);
+}
+
+}
